@@ -1,0 +1,314 @@
+<html lang="pt-CV">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kantinho Delícia - Fatura</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Additional SEO meta tags will be dynamically added -->
+</head>
+<body>
+    <div class="menu-container">
+        <div class="logo-container">
+            <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="pizzaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#ff6b6b;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#d9534f;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                
+                <!-- Pizza Slice Background -->
+                <path d="M50,20 L150,20 Q180,50 150,80 L50,80 Q20,50 50,20" 
+                      fill="url(#pizzaGradient)" 
+                      stroke="#333" 
+                      stroke-width="3"/>
+                
+                <!-- Toppings -->
+                <circle cx="80" cy="40" r="5" fill="#8B4513" /> <!-- Pepperoni -->
+                <circle cx="120" cy="60" r="5" fill="#8B4513" /> <!-- Pepperoni -->
+                
+                <!-- Text -->
+                <text x="100" y="65" 
+                      font-family="Arial, sans-serif" 
+                      font-size="20" 
+                      font-weight="bold" 
+                      text-anchor="middle" 
+                      fill="#ffffff">
+                    Kantinho
+                </text>
+                <text x="100" y="90" 
+                      font-family="Arial, sans-serif" 
+                      font-size="20" 
+                      font-weight="bold" 
+                      text-anchor="middle" 
+                      fill="#ffffff">
+                    Delícia
+                </text>
+            </svg>
+        </div>
+
+        <h1 class="classic-title">Kantinho Delícia</h1>
+        
+        <div class="menu-actions">
+            <button id="delivery-btn">Entrega em Domicílio</button>
+            <button id="drinks-btn">Bebidas</button>
+            <button id="menu-btn">Menu Principal</button>
+            <button id="customer-btn">Clientes</button>
+            <button id="config-btn">Configurações</button>
+            <button id="blog-btn" onclick="window.location.href='blog.html'">Blog</button>
+        </div>
+
+        <table id="menu-table">
+            <thead>
+                <tr>
+                    <th>Pizza</th>
+                    <th>Descrição</th>
+                    <th>Familiar</th>
+                    <th>Médio</th>
+                    <th>Pequeno</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="menu-body"></tbody>
+        </table>
+
+        <!-- Drinks table will be dynamically added here -->
+        <table id="drinks-table" style="display:none;">
+            <thead>
+                <tr>
+                    <th>Bebida</th>
+                    <th>Descrição</th>
+                    <th>Preço</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="drinks-body"></tbody>
+        </table>
+    </div>
+
+    <div class="cart-container">
+        <h2 class="classic-title">Carrinho de Compras</h2>
+        <table id="cart-table">
+            <thead>
+                <tr>
+                    <th>Pizza</th>
+                    <th>Tamanho</th>
+                    <th>Preço</th>
+                    <th>Quantidade</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="cart-body"></tbody>
+        </table>
+        <div class="cart-summary">
+            <p>Total: <span id="cart-total">0$00</span></p>
+            <button id="checkout-btn">Finalizar Compra</button>
+        </div>
+    </div>
+
+    <div id="invoice-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div id="invoice-content"></div>
+            <div class="customer-info-form">
+                <h3>Informações do Cliente</h3>
+                <input type="text" id="customer-name" placeholder="Nome do Cliente" required>
+                <input type="text" id="customer-address" placeholder="Endereço" required>
+                <input type="text" id="customer-nif" placeholder="NIF" required>
+                <button id="confirm-customer-btn">Confirmar Dados</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="delivery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn delivery-close">&times;</span>
+            <h2>Opções de Entrega</h2>
+            <div class="delivery-form">
+                <h3>Informações para Entrega</h3>
+                <input type="text" id="delivery-name" placeholder="Nome Completo" required>
+                <input type="tel" id="delivery-phone" placeholder="Número de Telefone" required>
+                <input type="text" id="delivery-address" placeholder="Endereço de Entrega" required>
+                <select id="delivery-zone" required>
+                    <option value="">Selecione sua Zona</option>
+                    <!-- Zones will be dynamically populated -->
+                </select>
+                <select id="delivery-time">
+                    <option value="">Selecione o Horário de Entrega</option>
+                    <option value="asap">O Mais Rápido Possível</option>
+                    <option value="30min">Dentro de 30 Minutos</option>
+                    <option value="1hour">Dentro de 1 Hora</option>
+                    <option value="scheduled">Agendar Horário</option>
+                </select>
+                <input type="datetime-local" id="delivery-scheduled-time" style="display:none;">
+                <textarea id="delivery-instructions" placeholder="Instruções Adicionais (opcional)"></textarea>
+                <button id="confirm-delivery-btn">Confirmar Entrega</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customer-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn customer-close">&times;</span>
+            <h2>Gestão de Clientes</h2>
+            <form id="add-customer-form">
+                <input type="text" id="customer-name" placeholder="Nome Completo" required>
+                <input type="tel" id="customer-phone" placeholder="Telefone" required>
+                <input type="email" id="customer-email" placeholder="Email">
+                <input type="text" id="customer-address" placeholder="Endereço">
+                <select id="customer-zone">
+                    <option value="">Selecione uma Zona</option>
+                </select>
+                <button type="submit">Adicionar/Atualizar Cliente</button>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Telefone</th>
+                        <th>Email</th>
+                        <th>Endereço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-list-body"></tbody>
+            </table>
+
+            <div id="zones-section">
+                <h3>Gestão de Zonas</h3>
+                <form id="add-zone-form">
+                    <input type="text" id="zone-name" placeholder="Nome da Zona" required>
+                    <input type="text" id="zone-description" placeholder="Descrição da Zona">
+                    <input type="number" id="zone-delivery-fee" placeholder="Taxa de Entrega" step="0.01" required>
+                    <button type="submit">Adicionar/Atualizar Zona</button>
+                </form>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Taxa de Entrega</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="zones-list-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="configuration-modal" class="modal">
+        <div class="modal-content wide-modal">
+            <span class="close-btn config-close">&times;</span>
+            <h2>Configurações do Sistema</h2>
+            
+            <div class="config-tabs">
+                <button class="config-tab active" data-tab="system">Sistema</button>
+                <button class="config-tab" data-tab="delivery">Entrega</button>
+                <button class="config-tab" data-tab="payment">Pagamento</button>
+                <button class="config-tab" data-tab="reports">Relatórios</button>
+            </div>
+
+            <div class="config-content" id="system-config">
+                <h3>Configurações do Sistema</h3>
+                <div class="config-section">
+                    <label>
+                        <input type="checkbox" id="multi-language-toggle"> 
+                        Habilitar Multi-Idioma
+                    </label>
+                    <label>
+                        <input type="checkbox" id="dark-mode-toggle"> 
+                        Modo Escuro
+                    </label>
+                    <div>
+                        <label>Moeda Padrão:</label>
+                        <select id="currency-select">
+                            <option value="CVE">Escudo Cabo-verdiano (CVE)</option>
+                            <option value="EUR">Euro (EUR)</option>
+                            <option value="USD">Dólar Americano (USD)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-content" id="delivery-config" style="display:none;">
+                <h3>Configurações de Entrega</h3>
+                <div class="config-section">
+                    <label>
+                        <input type="checkbox" id="delivery-enabled-toggle"> 
+                        Habilitar Entrega
+                    </label>
+                    <div>
+                        <label>Taxa de Entrega Padrão:</label>
+                        <input type="number" id="default-delivery-fee" step="0.01" min="0">
+                    </div>
+                    <div>
+                        <label>Tempo Mínimo de Entrega (minutos):</label>
+                        <input type="number" id="min-delivery-time" min="15">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-content" id="payment-config" style="display:none;">
+                <h3>Configurações de Pagamento</h3>
+                <div class="config-section">
+                    <label>
+                        <input type="checkbox" id="online-payment-toggle"> 
+                        Habilitar Pagamento Online
+                    </label>
+                    <div>
+                        <label>Métodos de Pagamento:</label>
+                        <div>
+                            <label>
+                                <input type="checkbox" name="payment-method" value="cash"> 
+                                Dinheiro
+                            </label>
+                            <label>
+                                <input type="checkbox" name="payment-method" value="card"> 
+                                Cartão
+                            </label>
+                            <label>
+                                <input type="checkbox" name="payment-method" value="mbway"> 
+                                MBWay
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-content" id="reports-config" style="display:none;">
+                <h3>Configurações de Relatórios</h3>
+                <div class="config-section">
+                    <label>
+                        <input type="checkbox" id="auto-reports-toggle"> 
+                        Geração Automática de Relatórios
+                    </label>
+                    <div>
+                        <label>Frequência de Relatórios:</label>
+                        <select id="report-frequency">
+                            <option value="daily">Diário</option>
+                            <option value="weekly">Semanal</option>
+                            <option value="monthly">Mensal</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-actions">
+                <button id="save-config-btn">Salvar Configurações</button>
+                <button id="reset-config-btn">Restaurar Padrões</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="menu.js"></script>
+    <script src="cart.js"></script>
+    <script src="invoice.js"></script>
+    <script src="delivery.js"></script>
+    <script src="customer.js"></script>
+    <script src="seo.js"></script>
+</body>
+</html>
